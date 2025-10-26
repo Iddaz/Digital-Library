@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
 
         const newBook = {
             name: req.body.name,
-            taken: req.body.taken || false,
+            taken: req.body.taken ? true : false,
         };
 
         const book = await Book.create(newBook);

@@ -7,6 +7,8 @@ import cors from 'cors';
 const app = express();
 
 app.use(express.json());
+
+// Enable CORS for all routes, in order to authorise requests from the frontend
 app.use(
     cors({
         origin: 'http://localhost:5173',
@@ -14,17 +16,17 @@ app.use(
         allowedHeaders: ['Content-Type'],
     })
 );
+
+// Stating that all routes starting with /books will be handled in booksRoutes
 app.use('/books', booksRoutes);
 
-app.get('/', (req, res) => {
-    console.log(req);
-    return res.status(200).send('The page is working!');
-});
-
+// Connecting to the database
 mongoose
     .connect(mongodbURL)
     .then(() => {
         console.log('The database is connected to the website');
+
+        // Starting the server
         app.listen(PORT, () => {
             console.log('App is working on the port:', PORT);
         });

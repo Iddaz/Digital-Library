@@ -6,12 +6,18 @@ import { useNavigate } from 'react-router-dom';
 
 const CreateBook = () => {
     const [name, setName] = useState('');
-    const [taken, setTaken] = useState({});
+    const [taken, setTaken] = useState(false);
+
+    // Variable which will show a loading spinner when true
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    // Function to save the new book
     const handleSaveBook = () => {
         const data = { name, taken };
         setLoading(true);
+
+        // Sending a request to the backend server to create a new book with the data
         axios
             .post('http://localhost:8888/books', data)
             .then(() => {
@@ -28,6 +34,7 @@ const CreateBook = () => {
         <div className='p-4'>
             <BackButton />
             <h1 className='text-3xl my-4'>Create Book</h1>
+            {/* Show the loading spinner when 'loading' is true */}
             {loading ? <Spinner /> : ''}
             <div className='flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4'>
                 <div className='my-4'>
@@ -46,7 +53,7 @@ const CreateBook = () => {
                 <label className='text-xl mr-4 text-gray-500'>Taken?</label>
                 <input
                     type='checkbox'
-                    value={taken}
+                    checked={taken}
                     onChange={(e) => {
                         setTaken(e.target.value);
                     }}
