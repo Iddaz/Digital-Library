@@ -3,14 +3,10 @@ import BackButton from '../components/BackButton.jsx';
 import Spinner from '../components/Spinner.jsx';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 
 const EditBook = () => {
     const [name, setName] = useState('');
     const [taken, setTaken] = useState(false);
-
-    // Showing notifications
-    const { enqueueSnackbar } = useSnackbar();
 
     // Variable which will show a loading spinner when true
     const [loading, setLoading] = useState(false);
@@ -32,7 +28,7 @@ const EditBook = () => {
                 setLoading(false);
                 console.log(err);
             });
-    }, []);
+    }, [id]);
 
     // Function to edit the book's details
     const handleEditBook = () => {
@@ -44,14 +40,10 @@ const EditBook = () => {
             .put(`http://localhost:8888/books/${id}`, data)
             .then(() => {
                 setLoading(false);
-                enqueueSnackbar('Book updated successfully', {
-                    variant: 'success',
-                });
                 navigate('/');
             })
             .catch((err) => {
                 setLoading(false);
-                enqueueSnackbar('Failed to update book', { variant: 'error' });
                 console.error(err);
             });
     };
