@@ -1,13 +1,13 @@
 // ...existing code...
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Spinner from '../components/Spinner';
+import { useNavigate } from 'react-router-dom';
+import Spinner from '../../components/Spinner';
 import { Link } from 'react-router-dom';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { BsInfoCircle } from 'react-icons/bs';
-import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
-import BookTable from '../components/home/BookTable';
-import BookGrid from '../components/home/BooksGrid';
+import { MdOutlineAddBox } from 'react-icons/md';
+import BookTable from '../../components/home/BookTable';
+import BookGrid from '../../components/home/BooksGrid';
+import LogoutButton from '../../components/LogoutButton';
 
 const Library = () => {
     const [books, setBooks] = useState([]);
@@ -15,6 +15,9 @@ const Library = () => {
     // Variable which will show a loading spinner when true
     const [loading, setLoading] = useState(false);
     const [showType, setShowType] = useState('table');
+
+    // Hook to redirect the user upon logout
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -32,6 +35,22 @@ const Library = () => {
                 setLoading(false);
             });
     }, []);
+
+    // Function to logout the user
+    const handleLogout = () => {
+        const refresh = localStorage.getItem('refreshToken');
+
+        // Call backend to invalidate refresh token
+        axios
+            .delete('/auth/logout', { data: { token: refresh } })
+            .catch((err) => console.warn('Logout request failed', err))
+            .finally(() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
+                delete axios.defaults.headers.common['Authorization'];
+                navigate('/login');
+            });
+    };
 
     return (
         <div className='p-4'>
@@ -52,9 +71,7 @@ const Library = () => {
             </div>
             <div className='flex justify-between items-center'>
                 <h1 className='text-3xl my-8'>Books List</h1>
-                <Link to='/books/create'>
-                    <MdOutlineAddBox className='text-sky-800 text-4xl' />
-                </Link>
+                <LogoutButton onLogout={handleLogout} />
             </div>
 
             {/* Show the loading spinner when 'loading' is true. Then, display the view of the books in the chosen way */}
@@ -65,6 +82,12 @@ const Library = () => {
             ) : (
                 <BookGrid books={books} />
             )}
+            
+            <div className='fixed right-10'>
+                <Link to='/books/create'>
+                    <MdOutlineAddBox className='text-sky-800 text-4xl' />
+                </Link>
+            </div>
         </div>
     );
 };

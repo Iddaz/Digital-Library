@@ -1,28 +1,47 @@
-import React, { useState } from 'react';
-import BackButton from '../components/BackButton.jsx';
-import Spinner from '../components/Spinner.jsx';
+import React, { useState, useEffect } from 'react';
+import BackButton from '../../components/BackButton.jsx';
+import Spinner from '../../components/Spinner.jsx';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CreateBook = () => {
+const EditBook = () => {
+    // State variables to store book details
     const [name, setName] = useState('');
     const [taken, setTaken] = useState(false);
 
     // Variable which will show a loading spinner when true
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { id } = useParams();
 
-    // Function to save the new book
-    const handleSaveBook = () => {
+    useEffect(() => {
+        setLoading(true);
+
+        // Sending a request to the backend server to get the book's details
+        axios
+            .get(`http://localhost:8888/books/${id}`)
+            .then((response) => {
+                setName(response.data.name);
+                setTaken(response.data.taken);
+                setLoading(false);
+            })
+            .catch((err) => {
+                setLoading(false);
+                console.log(err);
+            });
+    }, [id]);
+
+    // Function to edit the book's details
+    const handleEditBook = () => {
         const data = { name, taken };
         setLoading(true);
 
-        // Sending a request to the backend server to create a new book with the data
+        // Sending a request to the backend server to update the book's details
         axios
-            .post('http://localhost:8888/books', data)
+            .put(`http://localhost:8888/books/${id}`, data)
             .then(() => {
                 setLoading(false);
-                navigate('/');
+                navigate('/library');
             })
             .catch((err) => {
                 setLoading(false);
@@ -32,8 +51,8 @@ const CreateBook = () => {
 
     return (
         <div className='p-4'>
-            <BackButton />
-            <h1 className='text-3xl my-4'>Create Book</h1>
+            <BackButton destination='/library'/>
+            <h1 className='text-3xl my-4'>Edit Book</h1>
             {/* Show the loading spinner when 'loading' is true */}
             {loading ? <Spinner /> : ''}
             <div className='flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4'>
@@ -55,15 +74,15 @@ const CreateBook = () => {
                     type='checkbox'
                     checked={taken}
                     onChange={(e) => {
-                        setTaken(e.target.value);
+                        setTaken(e.target.checked);
                     }}
                     className='border-2 border-gray-500 px-4 py-2 w-full'
                 />
             </div>
-            <button onClick={handleSaveBook} className='bg-sky-300 p-2'>
+            <button onClick={handleEditBook} className='bg-sky-300 p-2'>
                 Save Book
             </button>
         </div>
     );
 };
-export default CreateBook;
+export default EditBook;

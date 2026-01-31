@@ -2,6 +2,7 @@ import express from 'express';
 import { PORT, mongodbURL } from './config.js';
 import mongoose from 'mongoose';
 import booksRoutes from './routes/booksRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import cors from 'cors';
 
 const app = express();
@@ -12,13 +13,17 @@ app.use(express.json());
 app.use(
     cors({
         origin: 'http://localhost:5173',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type'],
-    })
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    }),
 );
 
 // Stating that all routes starting with /books will be handled in booksRoutes
 app.use('/books', booksRoutes);
+
+// Stating that all routes starting with /auth will be handled in authRoutes
+app.use('/auth', authRoutes);
 
 // Connecting to the database
 mongoose

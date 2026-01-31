@@ -1,60 +1,116 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import BackButton from '../../components/BackButton';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
-export default class Register extends Component {
-    render() {
-        return (
-            <div className='p-4'>
-                <BackButton />
-                <div className='flex flex-col mt-30 w-full place-items-center mb-20'>
-                    <span className='text-2xl font-bold mb-3'>Register</span>
-                    <div className='flex'>
-                        <div className='flex flex-col'>
-                            <span className='p-3'>Name</span>
-                            <input
-                                type='text'
-                                className='w-33 border border-gray-300 rounded px-3 py-2 mr-4'
-                                placeholder='e.g. Selim'
-                            />
-                        </div>
-                        <div className='flex flex-col'>
-                            <span className='p-3'>Surname</span>
-                            <input
-                                type='text'
-                                className='w-33 border border-gray-300 rounded px-3 py-2'
-                                placeholder='e.g. Mashkov'
-                            />
-                        </div>
-                    </div>
+const Register = () => {
+    // State variables to hold the input values
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    // Navigation hook to redirect users after registration
+    const navigate = useNavigate();
+
+    // Function to show error notifications
+    const notify = (message) => toast.error(message);
+
+    // Function to save the new user
+    const handleSaveUser = () => {
+        const data = { name, surname, username, password, confirmPassword };
+
+        // Sending a request to the backend server to create a new user with the data
+        axios
+            .post('http://localhost:8888/auth/register', data)
+            .then(() => {
+                navigate('/login');
+            })
+            .catch((err) => {
+                notify(err.response.data.message);
+                console.error(err);
+            });
+    };
+
+    return (
+        <div className='p-4'>
+            <BackButton destination='/' />
+            <div className='flex flex-col mt-30 w-full place-items-center mb-20'>
+                <span className='text-2xl font-bold mb-3'>Register</span>
+                <div className='flex'>
                     <div className='flex flex-col'>
-                        <span className='p-3'>Username</span>
+                        <span className='p-3'>Name</span>
                         <input
                             type='text'
-                            className='w-70 border border-gray-300 rounded px-3 py-2'
-                            placeholder='e.g. luciatruno'
+                            value={name}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                            }}
+                            className='w-33 border border-gray-300 rounded px-3 py-2 mr-4'
+                            placeholder='e.g. Selim'
                         />
                     </div>
                     <div className='flex flex-col'>
-                        <span className='p-3'>Password</span>
+                        <span className='p-3'>Surname</span>
                         <input
-                            type='password'
-                            className='w-70 border border-gray-300 rounded px-3 py-2'
-                            placeholder='e.g. 123456767'
+                            type='text'
+                            value={surname}
+                            onChange={(e) => {
+                                setSurname(e.target.value);
+                            }}
+                            className='w-33 border border-gray-300 rounded px-3 py-2'
+                            placeholder='e.g. Mashkov'
                         />
                     </div>
-                    <div className='flex flex-col'>
-                        <span className='p-3'>Confirm Password</span>
-                        <input
-                            type='password'
-                            className='w-70 border border-gray-300 rounded px-3 py-2'
-                            placeholder='e.g. 123456767'
-                        />
-                    </div>
-                    <button className='mt-6 bg-blue-700 w-70 cursor-pointer hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4'>
-                        Register
-                    </button>
                 </div>
+                <div className='flex flex-col'>
+                    <span className='p-3'>Username</span>
+                    <input
+                        type='text'
+                        value={username}
+                        onChange={(e) => {
+                            setUsername(e.target.value);
+                        }}
+                        className='w-70 border border-gray-300 rounded px-3 py-2'
+                        placeholder='e.g. luciatruno'
+                    />
+                </div>
+                <div className='flex flex-col'>
+                    <span className='p-3'>Password</span>
+                    <input
+                        type='password'
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                        className='w-70 border border-gray-300 rounded px-3 py-2'
+                        placeholder='e.g. 123456767'
+                    />
+                </div>
+                <div className='flex flex-col'>
+                    <span className='p-3'>Confirm Password</span>
+                    <input
+                        type='password'
+                        value={confirmPassword}
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                        }}
+                        className='w-70 border border-gray-300 rounded px-3 py-2'
+                        placeholder='e.g. 123456767'
+                    />
+                </div>
+                <button
+                    onClick={handleSaveUser}
+                    className='mt-6 bg-blue-700 w-70 cursor-pointer hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4'
+                >
+                    Register
+                </button>
             </div>
-        );
-    }
-}
+            <Toaster />
+        </div>
+    );
+};
+
+export default Register;

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import CreateBook from './pages/CreateBook';
-import DeleteBook from './pages/DeleteBook';
-import EditBook from './pages/EditBook';
-import Library from './pages/Library';
-import ShowBook from './pages/ShowBook';
+import CreateBook from './pages/books/CreateBook';
+import DeleteBook from './pages/books/DeleteBook';
+import EditBook from './pages/books/EditBook';
+import Library from './pages/books/Library';
+import ShowBook from './pages/books/ShowBook';
 import Home from './pages/Home';
 import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
+import PrivateRoute from './pages/auth/PrivateRoute';
 
 const App = () => {
     return (
@@ -15,11 +16,46 @@ const App = () => {
             <Route path='/' element={<Home />}></Route>
             <Route path='/register' element={<Register />}></Route>
             <Route path='/login' element={<Login />}></Route>
-            <Route path='/library' element={<Library />}></Route>
-            <Route path='/books/create' element={<CreateBook />}></Route>
-            <Route path='/books/details/:id' element={<ShowBook />}></Route>
-            <Route path='/books/edit/:id' element={<EditBook />}></Route>
-            <Route path='/books/delete/:id' element={<DeleteBook />}></Route>
+            <Route
+                path='/library'
+                element={
+                    <PrivateRoute>
+                        <Library />
+                    </PrivateRoute>
+                }
+            ></Route>
+            <Route
+                path='/books/create'
+                element={
+                    <PrivateRoute>
+                        <CreateBook />
+                    </PrivateRoute>
+                }
+            ></Route>
+            <Route
+                path='/books/details/:id'
+                element={
+                    <PrivateRoute>
+                        <ShowBook />
+                    </PrivateRoute>
+                }
+            ></Route>
+            <Route
+                path='/books/edit/:id'
+                element={
+                    <PrivateRoute>
+                        <EditBook />
+                    </PrivateRoute>
+                }
+            ></Route>
+            <Route
+                path='/books/delete/:id'
+                element={
+                    <PrivateRoute>
+                        <DeleteBook />
+                    </PrivateRoute>
+                }
+            ></Route>
         </Routes>
     );
 };

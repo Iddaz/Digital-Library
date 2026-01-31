@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import BackButton from '../components/BackButton.jsx';
-import Spinner from '../components/Spinner.jsx';
+import BackButton from '../../components/BackButton.jsx';
+import Spinner from '../../components/Spinner.jsx';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const DeleteBook = () => {
             .delete(`http://localhost:8888/books/${id}`)
             .then(() => {
                 setLoading(false);
-                navigate('/');
+                navigate('/library');
             })
             .catch((error) => {
                 setLoading(false);
@@ -29,7 +29,7 @@ const DeleteBook = () => {
 
     return (
         <div className='p-4'>
-            <BackButton />
+            <BackButton destination='/library'/>
             <h1 className='text-3xl my-4'>Delete Book</h1>
             {/* Show the loading spinner when 'loading' is true */}
             {loading ? (
@@ -41,7 +41,7 @@ const DeleteBook = () => {
                     </h3>
 
                     <button
-                        className='p-4 bg-red-600 text-white m-8 w-full'
+                        className='p-4 cursor-pointer bg-red-600 text-white m-8 w-full'
                         onClick={handleDeleteBook}
                     >
                         Yes

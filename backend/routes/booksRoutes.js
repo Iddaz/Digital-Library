@@ -1,7 +1,11 @@
 import express from 'express';
 import { Book } from '../models/Book.js';
+import authenticateToken from '../middlewares/accessToken.js';
 
 const router = express.Router();
+
+// Require authentication for all /books routes
+router.use(authenticateToken);
 
 // Adding a book
 router.post('/', async (req, res) => {
