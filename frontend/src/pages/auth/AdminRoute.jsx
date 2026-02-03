@@ -7,21 +7,21 @@ const AdminRoute = ({ children }) => {
     const token = localStorage.getItem('token');
 
     if (!token) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to='/login' replace />;
     }
 
     try {
         const decodedToken = jwtDecode(token);
-        
+
         // Check if user is admin
         if (!decodedToken.admin) {
-            return <Navigate to="/" replace />;
+            return <Navigate to='/' replace />;
         }
 
         return children;
     } catch (err) {
         console.log('Invalid token:', err);
-        return <Navigate to="/login" replace />;
+        return <Navigate to='/login' replace />;
     }
 };
 

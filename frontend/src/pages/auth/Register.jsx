@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/Buttons/BackButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -108,6 +108,7 @@ const Register = () => {
                     Register
                 </button>
             </div>
+            {/* Component to display notifications */}
             <Toaster />
         </div>
     );

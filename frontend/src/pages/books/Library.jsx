@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import Spinner from '../../components/Spinner';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import BookTable from '../../components/home/BookTable';
 import BookGrid from '../../components/home/BooksGrid';
-import LogoutButton from '../../components/LogoutButton';
+import LogoutButton from '../../components/Buttons/LogoutButton';
 import { jwtDecode } from 'jwt-decode';
 import { Toaster } from 'react-hot-toast';
-import ProfileButton from '../../components/ProfileButton';
+import { logout } from '../../utils/auth';
+import ProfileButton from '../../components/Buttons/ProfileButton';
+import UsersButton from '../../components/Buttons/UsersButton';
 
 const Library = () => {
     const [books, setBooks] = useState([]);
@@ -18,9 +19,6 @@ const Library = () => {
     // Variable which will show a loading spinner when true
     const [loading, setLoading] = useState(false);
     const [showType, setShowType] = useState('table');
-
-    // Hook to redirect the user upon logout
-    const navigate = useNavigate();
 
     useEffect(() => {
         // Decode token to get admin status
@@ -33,20 +31,28 @@ const Library = () => {
                 console.log('Error decoding token:', err);
             }
         }
-        setLoading(true);
+        const fetchBooks = () => {
+            setLoading(true);
+            // Sending a request to the backend server to get the list of books
+            axios
+                .get('http://localhost:8888/books')
+                .then((res) => {
+                    setBooks(res.data.data);
+                    console.log(res.data.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setLoading(false);
+                });
+        };
 
-        // Sending a request to the backend server to get the list of books
-        axios
-            .get('http://localhost:8888/books')
-            .then((res) => {
-                setBooks(res.data.data);
-                console.log(res.data.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-            });
+        fetchBooks();
+
+        const onBooksUpdated = () => fetchBooks();
+        window.addEventListener('books-updated', onBooksUpdated);
+        return () =>
+            window.removeEventListener('books-updated', onBooksUpdated);
     }, []);
 
     const handleBookReserved = (bookId) => {
@@ -57,20 +63,11 @@ const Library = () => {
         );
     };
 
-    // Function to logout the user
-    const handleLogout = () => {
-        const refresh = localStorage.getItem('refreshToken');
+    const navigate = useNavigate();
 
-        // Call backend to invalidate refresh token
-        axios
-            .delete('/auth/logout', { data: { token: refresh } })
-            .catch((err) => console.warn('Logout request failed', err))
-            .finally(() => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('refreshToken');
-                delete axios.defaults.headers.common['Authorization'];
-                navigate('/login');
-            });
+    const handleLogout = async () => {
+        await logout();
+        navigate('/login');
     };
 
     return (
@@ -92,7 +89,7 @@ const Library = () => {
                     </button>
                 </div>
                 <div className='flex gap-x-4'>
-                    {!isAdmin && <ProfileButton />}
+                    {!isAdmin ? <ProfileButton /> : <UsersButton />}
                     <LogoutButton
                         className='fixed right-2 top-2'
                         onLogout={handleLogout}
@@ -119,6 +116,7 @@ const Library = () => {
                 <BookGrid books={books} onReserve={handleBookReserved} />
             )}
 
+            {/* Show the add book button only for admin users */}
             {isAdmin && (
                 <div className='fixed right-10'>
                     <Link to='/books/create'>

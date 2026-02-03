@@ -76,6 +76,7 @@ router.put('/:id', async (req, res) => {
             });
         }
 
+        // Get book ID from URL params
         const { id } = req.params;
         const result = await Book.findByIdAndUpdate(id, req.body);
 
@@ -84,6 +85,11 @@ router.put('/:id', async (req, res) => {
         }
 
         const book = await Book.findById(id);
+
+        if (!book.taken) {
+            // Remove book from all users who have it reserved
+            await User.updateMany({}, { $pull: { books: book._id } });
+        }
 
         return res.status(200).send({ message: 'Book updated', book: book });
     } catch (err) {
@@ -105,6 +111,7 @@ router.put('/reserve/:bookId', async (req, res) => {
             return res.status(404).send({ message: 'User not found' });
         }
 
+        // Check if user has reached reservation limit
         if (user.books.length >= 3) {
             return res
                 .status(400)
@@ -121,6 +128,31 @@ router.put('/reserve/:bookId', async (req, res) => {
                 user: updatedUser,
             });
         }
+    } catch (err) {
+        console.log(err);
+        res.status(400).send({ message: err });
+    }
+});
+
+// Remove a book from the current user's reserved list (return book)
+router.put('/remove/:bookId', async (req, res) => {
+    try {
+        const { bookId } = req.params;
+        const userId = req.user.id;
+
+        // Remove the book from the user's books array
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { books: bookId } },
+            { new: true },
+        );
+
+        // Mark the book as not taken
+        await Book.findByIdAndUpdate(bookId, { taken: false });
+
+        return res
+            .status(200)
+            .send({ message: 'Book removed from user', user: updatedUser });
     } catch (err) {
         console.log(err);
         res.status(400).send({ message: err });

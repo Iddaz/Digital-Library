@@ -5,12 +5,14 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
 import BookModal from './BookModal';
 import { BiShow } from 'react-icons/bi';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 const BookTable = ({ books, onReserve }) => {
+    // State to control the visibility of the book details modal
     const [showModal, setShowModal] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
+    // Function to handle showing the modal with selected book details
     const handleShowModal = (book) => {
         setSelectedBook(book);
         setShowModal(true);
@@ -79,6 +81,7 @@ const BookTable = ({ books, onReserve }) => {
                     ))}
                 </tbody>
             </table>
+            {/* Book details modal */}
             {showModal && selectedBook && (
                 <BookModal
                     book={selectedBook}

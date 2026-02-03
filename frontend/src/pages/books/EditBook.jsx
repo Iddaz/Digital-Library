@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import BackButton from '../../components/BackButton.jsx';
+import BackButton from '../../components/Buttons/BackButton.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -39,7 +39,7 @@ const EditBook = () => {
 
     // Function to edit the book's details
     const handleEditBook = () => {
-        const data = { name, taken };
+        const data = { name, author, description, taken };
         setLoading(true);
 
         // Sending a request to the backend server to update the book's details

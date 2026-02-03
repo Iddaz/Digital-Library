@@ -43,7 +43,35 @@ const BookModal = ({ book, onClose, onReserved }) => {
             })
             .catch((error) => {
                 console.error('Error reserving book:', error);
-                notifyError('Failed to reserve the book. Check your reservation limit.');
+                notifyError(
+                    'Failed to reserve the book. Check your reservation limit.',
+                );
+            });
+    };
+
+    // Handle returning/unreserving a book
+    const handleReturn = () => {
+        const bookId = book._id || book.id;
+        const payload = {
+            name: book.name,
+            author: book.author,
+            description: book.description,
+            taken: false,
+        };
+
+        axios
+            .put(`http://localhost:8888/books/${bookId}`, payload)
+            .then((response) => {
+                console.log('Return successful:', response.data);
+                // notify other parts of the app to refresh
+                window.dispatchEvent(new Event('books-updated'));
+                window.dispatchEvent(new Event('profile-updated'));
+                onClose();
+                notifySuccess('Book returned successfully!');
+            })
+            .catch((error) => {
+                console.error('Error returning book:', error);
+                notifyError('Failed to return the book.');
             });
     };
 
@@ -85,10 +113,14 @@ const BookModal = ({ book, onClose, onReserved }) => {
                     </h2>
                 </div>
                 <p className='my-4 text-gray-700'>{book.description}</p>
+                {/* Show reserve/return button only for non-admin users */}
                 {!isAdmin &&
                     (book.taken ? (
-                        <button className='bg-gray-600 cursor-not-allowed italic text-white font-bold py-2 px-4 rounded mt-4'>
-                            Reserve
+                        <button
+                            onClick={handleReturn}
+                            className='bg-red-600 cursor-pointer hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4'
+                        >
+                            Return
                         </button>
                     ) : (
                         <button

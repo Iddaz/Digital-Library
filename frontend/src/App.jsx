@@ -11,9 +11,11 @@ import Login from './pages/auth/Login';
 import PrivateRoute from './pages/auth/PrivateRoute';
 import AdminRoute from './pages/auth/AdminRoute';
 import Profile from './pages/Profile';
+import Users from './pages/Users';
 
 const App = () => {
     return (
+        // Define routes for each single URL of the website structure
         <Routes>
             <Route path='/' element={<Home />}></Route>
             <Route
@@ -22,6 +24,14 @@ const App = () => {
                     <PrivateRoute>
                         <Profile />
                     </PrivateRoute>
+                }
+            ></Route>
+            <Route
+                path='/admin/users'
+                element={
+                    <AdminRoute>
+                        <Users />
+                    </AdminRoute>
                 }
             ></Route>
             <Route

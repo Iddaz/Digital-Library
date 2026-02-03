@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BackButton from '../../components/BackButton.jsx';
+import BackButton from '../../components/Buttons/BackButton.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -29,7 +29,7 @@ const DeleteBook = () => {
 
     return (
         <div className='p-4'>
-            <BackButton destination='/library'/>
+            <BackButton destination='/library' />
             <h1 className='text-3xl my-4'>Delete Book</h1>
             {/* Show the loading spinner when 'loading' is true */}
             {loading ? (

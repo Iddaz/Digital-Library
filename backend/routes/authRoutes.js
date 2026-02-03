@@ -5,6 +5,7 @@ import { User } from '../models/User.js';
 import { REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } from '../config.js';
 import bodyParser from 'body-parser';
 import refreshToken from '../middlewares/refreshToken.js';
+import authenticateToken from '../middlewares/accessToken.js';
 
 const router = express.Router();
 
@@ -14,11 +15,25 @@ let refreshTokens = [];
 // Middleware to parse JSON and URL-encoded bodies so that req.body can be accessed
 router.use(bodyParser.urlencoded({ extended: true }));
 
+router.get('/users', async (req, res) => {
+    try {
+        const users = await User.find({});
+        return res.status(200).json({
+            count: users.length,
+            data: users,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message });
+    }
+});
+
 // Adding a new user
 router.post('/register', async (req, res) => {
     try {
         const { name, surname, username, password, confirmPassword } = req.body;
 
+        // Checking all of the conditions for a valid registrationq
         if (!name || !surname || !username || !password || !confirmPassword) {
             return res.status(400).send({ message: 'All fields are required' });
         }
@@ -86,12 +101,22 @@ router.post('/login', async (req, res) => {
         }
 
         // Generate access and refresh tokens for the logged in user
-        const userPayload = { username: existingUser.username, id: existingUser._id, admin: existingUser.admin };
-        const accessToken = jwt.sign(userPayload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const userPayload = {
+            username: existingUser.username,
+            id: existingUser._id,
+            admin: existingUser.admin,
+        };
+        const accessToken = jwt.sign(userPayload, ACCESS_TOKEN_SECRET, {
+            expiresIn: '15m',
+        });
         const refresh = refreshToken(userPayload);
         refreshTokens.push(refresh);
 
-        return res.status(200).send({ message: 'Login successful', accessToken, refreshToken: refresh });
+        return res.status(200).send({
+            message: 'Login successful',
+            accessToken,
+            refreshToken: refresh,
+        });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: err.message });
@@ -103,10 +128,57 @@ router.delete('/logout', async (req, res) => {
     try {
         // Invalidate the refresh token (expecting { token })
         const { token } = req.body;
-        if (!token) return res.status(400).send({ message: 'Refresh token required' });
+        if (!token)
+            return res.status(400).send({ message: 'Refresh token required' });
 
         refreshTokens = refreshTokens.filter((t) => t !== token);
         return res.status(200).send({ message: 'Logout successful' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message });
+    }
+});
+
+// Get current authenticated user profile (including reserved books)
+router.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId).populate('books');
+        if (!user) return res.status(404).send({ message: 'User not found' });
+        return res.status(200).send({ user });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message });
+    }
+});
+
+// Get all users (admin only)
+router.get('/all', authenticateToken, async (req, res) => {
+    try {
+        if (!req.user.admin) {
+            return res.status(403).send({ message: 'Admin access required' });
+        }
+        const users = await User.find({}).select('-password');
+        return res.status(200).send({ count: users.length, data: users });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message });
+    }
+});
+
+// Delete a user (admin only)
+router.delete('/:userId', authenticateToken, async (req, res) => {
+    try {
+        if (!req.user.admin) {
+            return res.status(403).send({ message: 'Admin access required' });
+        }
+        const { userId } = req.params;
+        const result = await User.findByIdAndDelete(userId);
+
+        if (!result) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send({ message: 'User deleted successfully' });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: err.message });

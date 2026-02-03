@@ -28,7 +28,7 @@ const userSchema = mongoose.Schema({
         default: [],
         max: 3,
         required: false,
-    }
+    },
 });
 
 export const User = mongoose.model('User', userSchema);

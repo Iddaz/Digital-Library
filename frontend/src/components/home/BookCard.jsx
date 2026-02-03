@@ -11,6 +11,7 @@ import BookModal from './BookModal';
 import { jwtDecode } from 'jwt-decode';
 
 const BookCard = ({ book, onReserve }) => {
+    // State to control the visibility of the book details modal
     const [showModal, setShowModal] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -45,6 +46,7 @@ const BookCard = ({ book, onReserve }) => {
                     className='text-3xl text-blue-800 hover:text-black cursor-pointer'
                     onClick={() => setShowModal(true)}
                 />
+                {/* If the book is taken, show unavailable icon, else show available icon */}
                 {isAdmin && (
                     <>
                         <Link to={`/books/edit/${book._id}`}>
@@ -56,6 +58,7 @@ const BookCard = ({ book, onReserve }) => {
                     </>
                 )}
             </div>
+            {/* Book details modal */}
             {showModal && (
                 <BookModal
                     book={book}

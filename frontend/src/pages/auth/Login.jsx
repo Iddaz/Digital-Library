@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/Buttons/BackButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -27,7 +27,8 @@ const Login = () => {
                 const { accessToken, refreshToken } = response.data;
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
-                axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                axios.defaults.headers.common['Authorization'] =
+                    `Bearer ${accessToken}`;
 
                 // Decode token to check if user is admin
                 const decodedToken = jwtDecode(accessToken);
@@ -79,6 +80,7 @@ const Login = () => {
                     Login
                 </button>
             </div>
+            {/* Component to display notifications */}
             <Toaster />
         </div>
     );
