@@ -86,7 +86,7 @@ router.post('/login', async (req, res) => {
         }
 
         // Generate access and refresh tokens for the logged in user
-        const userPayload = { username: existingUser.username, id: existingUser._id };
+        const userPayload = { username: existingUser.username, id: existingUser._id, admin: existingUser.admin };
         const accessToken = jwt.sign(userPayload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
         const refresh = refreshToken(userPayload);
         refreshTokens.push(refresh);

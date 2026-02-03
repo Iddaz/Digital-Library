@@ -22,6 +22,13 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         required: true,
     },
+    books: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Book',
+        default: [],
+        max: 3,
+        required: false,
+    }
 });
 
 export const User = mongoose.model('User', userSchema);

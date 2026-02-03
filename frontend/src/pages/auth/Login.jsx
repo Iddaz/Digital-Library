@@ -3,6 +3,7 @@ import BackButton from '../../components/BackButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
     // State variables to store username and password input values
@@ -27,7 +28,14 @@ const Login = () => {
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-                navigate('/library');
+
+                // Decode token to check if user is admin
+                const decodedToken = jwtDecode(accessToken);
+                if (decodedToken.admin) {
+                    navigate('/admin/library');
+                } else {
+                    navigate('/library');
+                }
             })
             .catch((err) => {
                 notify(err.response.data.message);

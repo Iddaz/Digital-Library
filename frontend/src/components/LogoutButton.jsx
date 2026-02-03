@@ -5,9 +5,9 @@ const LogoutButton = (props) => {
         <div className='flex items-center gap-x-4'>
             <button
                 onClick={props.onLogout}
-                className='bg-red-500 cursor-pointer hover:bg-red-800 text-white px-3 py-1 rounded'
+                className='bg-orange-400 cursor-pointer hover:bg-orange-500 px-3 py-1 rounded h-10 w-27'
             >
-                Logout
+                Log Out
             </button>
         </div>
     );

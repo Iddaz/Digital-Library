@@ -1,5 +1,7 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { Book } from '../models/Book.js';
+import { User } from '../models/User.js';
 import authenticateToken from '../middlewares/accessToken.js';
 
 const router = express.Router();
@@ -18,6 +20,8 @@ router.post('/', async (req, res) => {
 
         const newBook = {
             name: req.body.name,
+            author: req.body.author,
+            description: req.body.description,
             taken: req.body.taken ? true : false,
         };
 
@@ -88,17 +92,60 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Reserving a book
+router.put('/reserve/:bookId', async (req, res) => {
+    try {
+        const { bookId } = req.params;
+        const userId = req.user.id;
+
+        const book = await Book.findByIdAndUpdate(bookId, { taken: true });
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        if (user.books.length >= 3) {
+            return res
+                .status(400)
+                .send({ message: 'Reservation limit reached' });
+        } else {
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { $push: { books: bookId } },
+                { new: true },
+            );
+            return res.status(200).send({
+                message: 'Book reserved',
+                book: book,
+                user: updatedUser,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(400).send({ message: err });
+    }
+});
+
 // Delete a book
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        const bookObjectId = new mongoose.Types.ObjectId(id);
+
+        // Delete the book
         const result = await Book.findByIdAndDelete(id);
 
         if (!result) {
             return res.status(404).json({ message: 'Book not found' });
         }
 
-        return res.status(200).send({ message: 'Book deleted' });
+        // Remove book from all users who have it reserved
+        await User.updateMany({}, { $pull: { books: bookObjectId } });
+
+        return res
+            .status(200)
+            .send({ message: 'Book deleted and removed from all users' });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: err.message });
