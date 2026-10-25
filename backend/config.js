@@ -1,6 +1,6 @@
 export const PORT = process.env.PORT || 8888;
 export const mongodbURL =
-    'mongodb+srv://iddaz:Dy114148r141dd4zdm@digital-library.qr5y4nq.mongodb.net/?retryWrites=true&w=majority&appName=Digital-Library';
+    'mongodb+srv://iddaz:pnR1TA7pRmW61JJD@digital-library.qr5y4nq.mongodb.net/';
 export const ACCESS_TOKEN_SECRET =
     'd7e7d334c2d9691a12c617f067a677a67964b32b59fd9b6b00cdd528fa1ca94ae93a1c94ef0747d30c35906564287b7c021fa6280400d7073a072137ba781b1e';
 export const REFRESH_TOKEN_SECRET =
