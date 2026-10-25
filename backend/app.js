@@ -12,7 +12,7 @@ app.use(express.json());
 // Enable CORS for all routes, in order to authorise requests from the frontend
 app.use(
     cors({
-        origin: 'http://localhost:5173',
+        origin: '0.0.0.0',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
@@ -32,8 +32,8 @@ mongoose
         console.log('The database is connected to the website');
 
         // Starting the server
-        app.listen(PORT, () => {
-            console.log('App is working on the port:', PORT);
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`Server running on port ${PORT}`);
         });
     })
     .catch((err) => {
