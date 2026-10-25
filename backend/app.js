@@ -12,7 +12,7 @@ app.use(express.json());
 // Enable CORS for all routes, in order to authorise requests from the frontend
 app.use(
     cors({
-        origin: 'https://digital-library-frontend-30ac.onrender.com',
+        origin: 'https://digital-library-frontend-1k69.onrender.com',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
