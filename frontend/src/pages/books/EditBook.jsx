@@ -22,7 +22,7 @@ const EditBook = () => {
 
         // Sending a request to the backend server to get the book's details
         axios
-            .get(`https://digital-library-frontend-1k69.onrender.com/books/${id}`)
+            .get(`/books/${id}`)
             .then((response) => {
                 setInitialName(response.data.name);
                 setName(response.data.name);
@@ -44,7 +44,7 @@ const EditBook = () => {
 
         // Sending a request to the backend server to update the book's details
         axios
-            .put(` https://digital-library-frontend-1k69.onrender.com/books/${id}`, data)
+            .put(`/books/${id}`, data)
             .then(() => {
                 setLoading(false);
                 navigate('/library');

@@ -24,13 +24,16 @@ const Register = () => {
 
         // Sending a request to the backend server to create a new user with the data
         axios
-            .post('https://digital-library-frontend-1k69.onrender.com/auth/register', data)
+            .post('/auth/register', data)
             .then(() => {
                 navigate('/login');
             })
             .catch((err) => {
-                notify(err.response.data.message);
                 console.error(err);
+                notify(
+                    err.response?.data?.message ??
+                        'Unable to register. Please check your connection and try again.',
+                );
             });
     };
 
