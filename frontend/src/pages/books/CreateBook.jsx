@@ -21,7 +21,7 @@ const CreateBook = () => {
         setLoading(true);
         // Sending a request to the backend server to create a new book with the data
         axios
-            .post('http://localhost:8888/books', data)
+            .post('https://digital-library-frontend-1k69.onrender.com/books', data)
             .then(() => {
                 setLoading(false);
                 navigate('/library');

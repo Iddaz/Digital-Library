@@ -16,7 +16,7 @@ const ShowBook = () => {
 
         // Sending a request to the backend server to get the details of a specific book
         axios
-            .get(`http://localhost:8888/books/${id}`)
+            .get(`https://digital-library-frontend-1k69.onrender.com/books/${id}`)
             .then((res) => {
                 setBook(res.data);
                 setLoading(false);

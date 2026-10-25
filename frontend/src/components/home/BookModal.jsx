@@ -34,7 +34,7 @@ const BookModal = ({ book, onClose, onReserved }) => {
         const bookId = book._id || book.id;
 
         axios
-            .put(`http://localhost:8888/books/reserve/${bookId}/`)
+            .put(`https://digital-library-frontend-1k69.onrender.com/books/reserve/${bookId}/`)
             .then((response) => {
                 console.log('Reservation successful:', response.data);
                 if (typeof onReserved === 'function') onReserved(bookId);
@@ -60,7 +60,7 @@ const BookModal = ({ book, onClose, onReserved }) => {
         };
 
         axios
-            .put(`http://localhost:8888/books/${bookId}`, payload)
+            .put(`https://digital-library-frontend-1k69.onrender.com/books/${bookId}`, payload)
             .then((response) => {
                 console.log('Return successful:', response.data);
                 // notify other parts of the app to refresh

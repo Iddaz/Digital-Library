@@ -22,7 +22,7 @@ const Login = () => {
 
         // Sending a request to the backend server to login the user with the data
         axios
-            .post('http://localhost:8888/auth/login', data)
+            .post('https://digital-library-frontend-1k69.onrender.com/auth/login', data)
             .then((response) => {
                 const { accessToken, refreshToken } = response.data;
                 localStorage.setItem('token', accessToken);

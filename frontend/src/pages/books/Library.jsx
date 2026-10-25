@@ -35,7 +35,7 @@ const Library = () => {
             setLoading(true);
             // Sending a request to the backend server to get the list of books
             axios
-                .get('http://localhost:8888/books')
+                .get('https://digital-library-frontend-1k69.onrender.com/books')
                 .then((res) => {
                     setBooks(res.data.data);
                     console.log(res.data.data);

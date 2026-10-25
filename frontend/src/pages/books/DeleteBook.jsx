@@ -16,7 +16,7 @@ const DeleteBook = () => {
 
         // Sending a request to the backend server with the id of the book and deleting it
         axios
-            .delete(`http://localhost:8888/books/${id}`)
+            .delete(`https://digital-library-frontend-1k69.onrender.com/books/${id}`)
             .then(() => {
                 setLoading(false);
                 navigate('/library');
