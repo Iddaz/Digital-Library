@@ -7,7 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
 // Configure axios defaults
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+axios.defaults.baseURL =
+    import.meta.env.VITE_API_URL || 'https://digital-library-7nt4.onrender.com';
 const token = localStorage.getItem('token');
 if (token) axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
